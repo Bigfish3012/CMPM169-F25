@@ -1,11 +1,6 @@
-// Generative Floor Lamp - p5.js Implementation
-// All parameters with validation and constraints
-
-// Global parameters with defaults
 let params = {
   seed: 12345,
   baseRadius_cm: 18,
-  baseShape: 'trapezoid',
   mainHeight_m: 1.7,
   mainRadius_cm: 5,
   branchCount: 3,
@@ -13,23 +8,11 @@ let params = {
   branchRadius_cm: 2,
   bulbDiameter_cm: 10
 };
-
-// Store branch lengths for each branch
 let branchLengths = [];
-
-// Store branch positions (pre-calculated)
 let branchPositions = [];
-
-// Lamp power state
 let lampIsOn = true;
-
-// Individual bulb states (on/off for each bulb)
 let bulbStates = [];
-
-// Bulb hit boxes for click detection
 let bulbHitBoxes = [];
-
-// Switch button dimensions and position
 let switchButton = {
   x: 0,
   y: 0,
@@ -40,41 +23,32 @@ let switchButton = {
 // Canvas and scaling
 let canvasWidth = 800;
 let canvasHeight = 800;
-let scalePxPerMeter = 300; // Fixed scale: 300 pixels per meter
+let scalePxPerMeter = 300;
 let lampCenterX = canvasWidth / 2;
 
-// UI elements
 let uiElements = {};
-
-// Random generator for deterministic results (using p5's global functions)
 
 function setup() {
   createCanvas(canvasWidth, canvasHeight);
   
-  // Create UI elements
   createUI();
   
-  // Generate initial lamp
   generateLamp();
 }
 
 function draw() {
   background(240);
   
-  // Draw ground line
   stroke(100);
   strokeWeight(2);
   let groundY = height - 80;
   line(0, groundY, width, groundY);
   
-  // Draw lamp
   drawLamp();
   
-  // Draw UI info
   drawInfo();
 }
 
-// Removed: using fixed scale instead of dynamic scaling
 
 function cmToPx(cm) {
   return (cm / 100) * scalePxPerMeter;
@@ -211,16 +185,16 @@ function createUI() {
 }
 
 function validateAndClampParams() {
-  // Hard limits enforcement
+  //limits
   params.mainHeight_m = constrain(params.mainHeight_m, 0.7, 2.5);
   params.mainRadius_cm = constrain(params.mainRadius_cm, 1, 10);
-  params.bulbDiameter_cm = constrain(params.bulbDiameter_cm, 5, 50); // Increased max to 50
+  params.bulbDiameter_cm = constrain(params.bulbDiameter_cm, 5, 50);
   params.branchCount = constrain(params.branchCount, 2, 20);
   params.branchLength_cm = constrain(params.branchLength_cm, 15, 100);
   params.baseRadius_cm = constrain(params.baseRadius_cm, 10, 30);
   params.branchRadius_cm = constrain(params.branchRadius_cm, 0.7, 5);
   
-  // Soft constraints
+  //constraints
   if (params.branchCount >= 6 || params.bulbDiameter_cm >= 8) {
     let minBaseRadius = max(12, 0.12 * params.mainHeight_m * 100);
     params.baseRadius_cm = max(params.baseRadius_cm, minBaseRadius);
@@ -235,26 +209,21 @@ function validateAndClampParams() {
 function generateLamp() {
   validateAndClampParams();
   
-  // Set up deterministic random
   randomSeed(params.seed);
   
-  // Generate random branch lengths for each branch
   branchLengths = [];
-  // Use params.branchLength_cm as the maximum length
   let maxBranchLength = params.branchLength_cm;
-  let minBranchLength = max(15, maxBranchLength * 0.6); // Minimum is 60% of max, but at least 15cm
+  let minBranchLength = max(15, maxBranchLength * 0.6);
   for (let i = 0; i < params.branchCount; i++) {
     branchLengths.push(random(minBranchLength, maxBranchLength));
   }
   
-  // Pre-calculate branch positions (heights and angles)
   branchPositions = [];
-  let minSeparation = TWO_PI / params.branchCount * 0.3; // Minimum angular separation
+  let minSeparation = TWO_PI / params.branchCount * 0.3;
   
   for (let i = 0; i < params.branchCount; i++) {
-    let heightRatio = random(0.2, 0.8); // Random height between 20% and 80% of trunk
+    let heightRatio = random(0.2, 0.8);
     
-    // Calculate angle with separation
     let angle;
     if (i === 0) {
       angle = random(0, TWO_PI);
@@ -273,15 +242,13 @@ function generateLamp() {
     branchPositions.push({heightRatio: heightRatio, angle: angle});
   }
   
-  // Initialize bulb states (all on by default)
   bulbStates = [];
   bulbHitBoxes = [];
   for (let i = 0; i < params.branchCount; i++) {
-    bulbStates.push(true); // All bulbs start on
-    bulbHitBoxes.push({ x: 0, y: 0, radius: 0 }); // Will be updated during drawing
+    bulbStates.push(true);
+    bulbHitBoxes.push({ x: 0, y: 0, radius: 0 });
   }
   
-  // Update UI values
   updateUIValues();
 }
 
@@ -310,24 +277,19 @@ function updateUIValues() {
 function drawLamp() {
   push();
   
-  // Fixed positions - base at bottom center of canvas
-  let groundY = height - 80; // Ground line position
-  let baseHeight = cmToPx(params.baseRadius_cm * 0.8); // Height of trapezoid base
-  let baseBottomY = groundY; // Bottom of base at ground level
-  let baseTopY = baseBottomY - baseHeight; // Top of base
+  let groundY = height - 80;
+  let baseHeight = cmToPx(params.baseRadius_cm * 0.8);
+  let baseBottomY = groundY;
+  let baseTopY = baseBottomY - baseHeight;
   let trunkHeight = mToPx(params.mainHeight_m);
   let trunkTopY = baseTopY - trunkHeight;
   
-  // Draw base (pass the bottom Y position)
   drawBase(lampCenterX, baseBottomY, baseHeight);
   
-  // Draw main trunk (starts from top of base)
   drawTrunk(lampCenterX, baseTopY, trunkTopY);
   
-  // Draw branches and bulbs
   drawBranches(lampCenterX, baseTopY, trunkTopY);
   
-  // Draw main switch at the base bottom (ground level)
   drawMainSwitch(lampCenterX, baseBottomY);
   
   pop();
@@ -337,15 +299,13 @@ function drawBase(x, bottomY, baseHeight) {
   push();
   translate(x, bottomY);
   
-  fill(80, 60, 40); // Brown color for base
+  fill(80, 60, 40);
   stroke(60, 40, 20);
   strokeWeight(2);
   
-  // Draw trapezoid base
   let baseWidth = cmToPx(params.baseRadius_cm * 2);
-  let baseTopWidth = baseWidth * 0.6; // Top is 60% of bottom width
+  let baseTopWidth = baseWidth * 0.6;
   
-  // Draw from bottom (0) to top (-baseHeight)
   beginShape();
   vertex(-baseTopWidth / 2, -baseHeight);
   vertex(baseTopWidth / 2, -baseHeight);
@@ -359,11 +319,10 @@ function drawBase(x, bottomY, baseHeight) {
 function drawTrunk(x, baseY, topY) {
   push();
   
-  fill(120, 100, 80); // Wood color
+  fill(120, 100, 80);
   stroke(100, 80, 60);
   strokeWeight(1);
   
-  // Draw trunk as rectangle (perfectly straight)
   rectMode(CENTER);
   let trunkWidth = cmToPx(params.mainRadius_cm * 2);
   let trunkHeight = baseY - topY;
@@ -376,7 +335,6 @@ function drawTrunk(x, baseY, topY) {
 function drawBranches(x, baseY, topY) {
   let trunkHeight = baseY - topY;
   
-  // Use pre-calculated branch positions from generateLamp()
   for (let i = 0; i < branchPositions.length; i++) {
     let pos = branchPositions[i];
     let branchY = topY + trunkHeight * pos.heightRatio;
@@ -387,23 +345,19 @@ function drawBranches(x, baseY, topY) {
 function drawBranch(trunkX, branchY, angle, branchIndex) {
   push();
   
-  // Use random branch length for this specific branch
   let branchLength = cmToPx(branchLengths[branchIndex]);
   let endX = trunkX + cos(angle) * branchLength;
   let endY = branchY + sin(angle) * branchLength;
   
-  // Draw branch
   fill(100, 80, 60);
   stroke(80, 60, 40);
   strokeWeight(2);
   
   let branchRadius = cmToPx(params.branchRadius_cm);
   
-  // Draw branch as thick line
   strokeWeight(branchRadius * 2);
   line(trunkX, branchY, endX, endY);
   
-  // Draw bulb
   drawBulb(endX, endY, branchIndex);
   
   pop();
@@ -414,34 +368,28 @@ function drawBulb(x, y, bulbIndex) {
   
   let bulbRadius = cmToPx(params.bulbDiameter_cm / 2);
   
-  // Update hit box for this bulb
   if (bulbIndex < bulbHitBoxes.length) {
     bulbHitBoxes[bulbIndex].x = x;
     bulbHitBoxes[bulbIndex].y = y;
     bulbHitBoxes[bulbIndex].radius = bulbRadius;
   }
   
-  // Check if main switch is on AND this individual bulb is on
   let isBulbOn = lampIsOn && bulbStates[bulbIndex];
   
   if (isBulbOn) {
-    // Bulb is on - bright yellow with glow
-    // Draw glow effect first (behind the bulb)
     fill(255, 255, 200, 50);
     noStroke();
-    circle(x, y, bulbRadius * 2.4); // Diameter = radius * 2.4
+    circle(x, y, bulbRadius * 2.4);
     
-    // Draw main bulb
     fill(255, 255, 200);
     stroke(200, 200, 150);
     strokeWeight(1);
-    circle(x, y, bulbRadius * 2); // Diameter = radius * 2
+    circle(x, y, bulbRadius * 2);
   } else {
-    // Bulb is off - gray, no glow
     fill(100, 100, 100);
     stroke(70, 70, 70);
     strokeWeight(1);
-    circle(x, y, bulbRadius * 2); // Diameter = radius * 2
+    circle(x, y, bulbRadius * 2);
   }
   
   pop();
@@ -450,32 +398,27 @@ function drawBulb(x, y, bulbIndex) {
 function drawMainSwitch(x, baseBottomY) {
   push();
   
-  // Position switch at the center of the base (on the ground)
   let switchSize = cmToPx(4);
   let switchX = x;
   let switchY = baseBottomY - switchSize / 2;
   
-  // Update switch button hitbox for click detection
   switchButton.x = switchX - switchSize / 2;
   switchButton.y = switchY - switchSize / 2;
   switchButton.width = switchSize;
   switchButton.height = switchSize;
-  
-  // Draw switch button
+
   if (lampIsOn) {
-    fill(60, 200, 60); // Green when on
+    fill(60, 200, 60);
     stroke(40, 150, 40);
   } else {
-    fill(200, 60, 60); // Red when off
+    fill(200, 60, 60);
     stroke(150, 40, 40);
   }
   strokeWeight(2);
   
-  // Draw switch as circle
   ellipseMode(CENTER);
   circle(switchX, switchY, switchSize);
   
-  // Draw power symbol
   fill(255);
   noStroke();
   textAlign(CENTER, CENTER);
@@ -514,36 +457,29 @@ function drawInfo() {
 }
 
 function mousePressed() {
-  // Check if mouse clicked on the switch button first
   if (mouseX >= switchButton.x && 
       mouseX <= switchButton.x + switchButton.width &&
       mouseY >= switchButton.y && 
       mouseY <= switchButton.y + switchButton.height) {
-    // Toggle main lamp power state
     lampIsOn = !lampIsOn;
-    return; // Don't check bulbs if switch was clicked
+    return;
   }
   
-  // Check if mouse clicked on any bulb
   for (let i = 0; i < bulbHitBoxes.length; i++) {
     let bulb = bulbHitBoxes[i];
     let distance = dist(mouseX, mouseY, bulb.x, bulb.y);
     
-    // Check if click is within the bulb's radius
     if (distance <= bulb.radius) {
-      // Toggle this individual bulb's state
       bulbStates[i] = !bulbStates[i];
-      return; // Only toggle one bulb per click
+      return;
     }
   }
 }
 
 function keyPressed() {
   if (key === 'r' || key === 'R') {
-    // Regenerate with current seed
     generateLamp();
   } else if (key === 's' || key === 'S') {
-    // Save PNG
     savePNG();
   }
 }
