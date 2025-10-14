@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 20px;
   font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
+  background-color: #FFCF71;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -22,15 +22,14 @@ main {
 }
 
 #controls h2 {
-  color: #333;
+  color: black;
   font-size: 28px;
   margin-bottom: 10px;
 }
 
 canvas {
   display: block;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: white;
-  border-radius: 8px;
+  border-radius: 50px;
   max-width: 100%;
 }

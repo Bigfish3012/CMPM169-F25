@@ -96,6 +96,12 @@ class DataLoader {
       let kills = parseInt(killsStr.split('(')[0]);
       let headshots = parseInt(killsStr.split('(')[1].split(')')[0]);
       
+      let dmgDealtStr = row.getString('DmgDealt');
+      let dmgDealt = parseFloat(dmgDealtStr);
+      
+      let avgDmgStr = row.getString('AVG.DmgDealt');
+      let avgDmg = parseFloat(avgDmgStr);
+      
       let longestKillStr = row.getString('LongestKill');
       let longestKill = parseFloat(longestKillStr.replace('m', ''));
       
@@ -111,13 +117,17 @@ class DataLoader {
         team: row.getString('Team'),
         kills: kills,
         headshots: headshots,
-        dmgDealt: row.getNum('DmgDealt'),
+        dmgDealt: dmgDealt,
+        dmgDealtStr: dmgDealtStr,
         assists: row.getNum('Assists'),
-        avgDmg: row.getNum('AVG.DmgDealt'),
+        avgDmg: avgDmg,
+        avgDmgStr: avgDmgStr,
         longestKill: longestKill,
+        longestKillStr: longestKillStr,
         timeSurvived: timeSurvivedSeconds,
         timeSurvivedStr: timeSurvivedStr,
-        disMoved: disMoved
+        disMoved: disMoved,
+        disMovedStr: disMovedStr
       };
       this.teamsData.push(teamData);
       
@@ -140,6 +150,12 @@ class DataLoader {
       let kills = parseInt(killsStr.split('(')[0]);
       let headshots = parseInt(killsStr.split('(')[1].split(')')[0]);
       
+      let dmgDealtStr = row.getString('DmgDealt');
+      let dmgDealt = parseFloat(dmgDealtStr);
+      
+      let avgDmgStr = row.getString('AVG.DmgDealt');
+      let avgDmg = parseFloat(avgDmgStr);
+      
       let longestKillStr = row.getString('LongestKill');
       let longestKill = parseFloat(longestKillStr.replace('m', ''));
       
@@ -156,13 +172,17 @@ class DataLoader {
         player: row.getString('Player'),
         kills: kills,
         headshots: headshots,
-        dmgDealt: row.getNum('DmgDealt'),
+        dmgDealt: dmgDealt,
+        dmgDealtStr: dmgDealtStr,
         assists: row.getNum('Assists'),
-        avgDmg: row.getNum('AVG.DmgDealt'),
+        avgDmg: avgDmg,
+        avgDmgStr: avgDmgStr,
         longestKill: longestKill,
+        longestKillStr: longestKillStr,
         timeSurvived: timeSurvivedSeconds,
         timeSurvivedStr: timeSurvivedStr,
-        disMoved: disMoved
+        disMoved: disMoved,
+        disMovedStr: disMovedStr
       };
       this.teamsData.push(teamData);
       

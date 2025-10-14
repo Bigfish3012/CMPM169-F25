@@ -256,7 +256,9 @@ class Visualizer {
     }
   }
   
-  drawStatsBars(teamData, y, chartStartX, chartWidth, barHeight, barSpacing, animationProgress, maxKills, maxDamage, maxAssists, maxAvgDmg, maxLongestKill, maxTimeSurvived, maxDisMoved) {
+  drawStatsBars(teamData, y, chartStartX, chartWidth, barHeight, barSpacing, 
+                animationProgress, maxKills, maxDamage, maxAssists, maxAvgDmg, 
+                maxLongestKill, maxTimeSurvived, maxDisMoved) {
     let easedProgress = this.easeOutCubic(animationProgress);
     
     // Use independent scales for each metric
@@ -308,7 +310,7 @@ class Visualizer {
       fill(255);
       textSize(13);
       textAlign(CENTER);
-      text('Damage: ' + nf(teamData.dmgDealt, 0, 0), chartStartX + dmgWidth / 2, bar2Y + barHeight / 2 + 5);
+      text('Damage: ' + teamData.dmgDealtStr, chartStartX + dmgWidth / 2, bar2Y + barHeight / 2 + 5);
       
       noFill();
       stroke(0, 200);
@@ -350,7 +352,7 @@ class Visualizer {
       fill(255);
       textSize(13);
       textAlign(CENTER);
-      text('AVG Damage: ' + nf(teamData.avgDmg, 0, 0), chartStartX + avgDmgWidth / 2, bar4Y + barHeight / 2 + 5);
+      text('AVG Damage: ' + teamData.avgDmgStr, chartStartX + avgDmgWidth / 2, bar4Y + barHeight / 2 + 5);
       
       noFill();
       stroke(0, 200);
@@ -371,7 +373,7 @@ class Visualizer {
       fill(255);
       textSize(13);
       textAlign(CENTER);
-      text('Longest Kill: ' + nf(teamData.longestKill, 0, 1) + 'm', chartStartX + longestKillWidth / 2, bar5Y + barHeight / 2 + 5);
+      text('Longest Kill: ' + teamData.longestKillStr, chartStartX + longestKillWidth / 2, bar5Y + barHeight / 2 + 5);
       
       noFill();
       stroke(0, 200);
@@ -413,7 +415,7 @@ class Visualizer {
       fill(255);
       textSize(13);
       textAlign(CENTER);
-      text('Dist Moved: ' + nf(teamData.disMoved, 0, 0) + 'km', chartStartX + disMovedWidth / 2, bar7Y + barHeight / 2 + 5);
+      text('Dist Moved: ' + teamData.disMovedStr, chartStartX + disMovedWidth / 2, bar7Y + barHeight / 2 + 5);
       
       noFill();
       stroke(0, 200);
