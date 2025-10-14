@@ -7,6 +7,21 @@ class Visualizer {
     return 1 - Math.pow(1 - t, 3);
   }
   
+  // Helper function to draw hover text and border on bars
+  drawBarHover(labelText, x, y, width, height) {
+    fill(255);
+    textSize(13);
+    textAlign(CENTER);
+    text(labelText, x + width / 2, y + height / 2 + 5);
+    
+    noFill();
+    stroke(0, 200);
+    strokeWeight(2);
+    rect(x, y, width, height);
+    strokeWeight(1);
+    noStroke();
+  }
+  
   drawTitle(dataSource) {
     textSize(24);
     textAlign(CENTER);
@@ -179,17 +194,7 @@ class Visualizer {
     rect(chartStartX, bar1Y, totalPointsWidth, barHeight);
     
     if (bar1Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('Total Points: ' + teamData.totalPoints, chartStartX + totalPointsWidth / 2, bar1Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar1Y, totalPointsWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('Total Points: ' + teamData.totalPoints, chartStartX, bar1Y, totalPointsWidth, barHeight);
     }
     
     // Bar 2: Placement Points
@@ -200,17 +205,7 @@ class Visualizer {
     rect(chartStartX, bar2Y, placementPointsWidth, barHeight);
     
     if (bar2Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('Placement Points: ' + teamData.placementPoints, chartStartX + placementPointsWidth / 2, bar2Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar2Y, placementPointsWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('Placement Points: ' + teamData.placementPoints, chartStartX, bar2Y, placementPointsWidth, barHeight);
     }
     
     // Bar 3: Kills
@@ -221,17 +216,7 @@ class Visualizer {
     rect(chartStartX, bar3Y, killsWidth, barHeight);
     
     if (bar3Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('Kills: ' + teamData.kills, chartStartX + killsWidth / 2, bar3Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar3Y, killsWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('Kills: ' + teamData.kills, chartStartX, bar3Y, killsWidth, barHeight);
     }
     
     // Bar 4: WWCD
@@ -242,17 +227,7 @@ class Visualizer {
     rect(chartStartX, bar4Y, wwcdWidth, barHeight);
     
     if (bar4Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('WWCD: ' + teamData.wwcd, chartStartX + wwcdWidth / 2, bar4Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar4Y, wwcdWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('WWCD: ' + teamData.wwcd, chartStartX, bar4Y, wwcdWidth, barHeight);
     }
   }
   
@@ -286,17 +261,7 @@ class Visualizer {
     rect(chartStartX, bar1Y, killsWidth, barHeight);
     
     if (bar1Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('Kills(HS): ' + teamData.kills + '(' + teamData.headshots + ')', chartStartX + killsWidth / 2, bar1Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar1Y, killsWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('Kills(HS): ' + teamData.kills + '(' + teamData.headshots + ')', chartStartX, bar1Y, killsWidth, barHeight);
     }
     
     // Bar 2: Damage Dealt
@@ -307,17 +272,7 @@ class Visualizer {
     rect(chartStartX, bar2Y, dmgWidth, barHeight);
     
     if (bar2Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('Damage: ' + teamData.dmgDealtStr, chartStartX + dmgWidth / 2, bar2Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar2Y, dmgWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('Damage: ' + teamData.dmgDealtStr, chartStartX, bar2Y, dmgWidth, barHeight);
     }
     
     // Bar 3: Assists
@@ -328,17 +283,7 @@ class Visualizer {
     rect(chartStartX, bar3Y, assistsWidth, barHeight);
     
     if (bar3Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('Assists: ' + teamData.assists, chartStartX + assistsWidth / 2, bar3Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar3Y, assistsWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('Assists: ' + teamData.assists, chartStartX, bar3Y, assistsWidth, barHeight);
     }
     
     // Bar 4: AVG Damage
@@ -349,17 +294,7 @@ class Visualizer {
     rect(chartStartX, bar4Y, avgDmgWidth, barHeight);
     
     if (bar4Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('AVG Damage: ' + teamData.avgDmgStr, chartStartX + avgDmgWidth / 2, bar4Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar4Y, avgDmgWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('AVG Damage: ' + teamData.avgDmgStr, chartStartX, bar4Y, avgDmgWidth, barHeight);
     }
     
     // Bar 5: Longest Kill
@@ -370,17 +305,7 @@ class Visualizer {
     rect(chartStartX, bar5Y, longestKillWidth, barHeight);
     
     if (bar5Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('Longest Kill: ' + teamData.longestKillStr, chartStartX + longestKillWidth / 2, bar5Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar5Y, longestKillWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('Longest Kill: ' + teamData.longestKillStr, chartStartX, bar5Y, longestKillWidth, barHeight);
     }
     
     // Bar 6: Time Survived
@@ -391,17 +316,7 @@ class Visualizer {
     rect(chartStartX, bar6Y, timeSurvivedWidth, barHeight);
     
     if (bar6Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('Time Survived: ' + teamData.timeSurvivedStr, chartStartX + timeSurvivedWidth / 2, bar6Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar6Y, timeSurvivedWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('Time Survived: ' + teamData.timeSurvivedStr, chartStartX, bar6Y, timeSurvivedWidth, barHeight);
     }
     
     // Bar 7: Distance Moved
@@ -412,17 +327,7 @@ class Visualizer {
     rect(chartStartX, bar7Y, disMovedWidth, barHeight);
     
     if (bar7Hover) {
-      fill(255);
-      textSize(13);
-      textAlign(CENTER);
-      text('Dist Moved: ' + teamData.disMovedStr, chartStartX + disMovedWidth / 2, bar7Y + barHeight / 2 + 5);
-      
-      noFill();
-      stroke(0, 200);
-      strokeWeight(2);
-      rect(chartStartX, bar7Y, disMovedWidth, barHeight);
-      strokeWeight(1);
-      noStroke();
+      this.drawBarHover('Dist Moved: ' + teamData.disMovedStr, chartStartX, bar7Y, disMovedWidth, barHeight);
     }
   }
 }
