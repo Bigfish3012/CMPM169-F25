@@ -12,7 +12,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1400, 2250);
+  createCanvas(1400, 16000);
   textFont('Arial');
   frameRate(60);
   

@@ -93,8 +93,15 @@ class DataLoader {
     for (let i = 0; i < table.getRowCount(); i++) {
       let row = table.getRow(i);
       let killsStr = row.getString('Kills(HS)');
-      let kills = parseInt(killsStr.split('(')[0]);
-      let headshots = parseInt(killsStr.split('(')[1].split(')')[0]);
+      let kills, headshots;
+      
+      if (killsStr.includes('(')) {
+        kills = parseInt(killsStr.split('(')[0]);
+        headshots = parseInt(killsStr.split('(')[1].split(')')[0]);
+      } else {
+        kills = parseInt(killsStr);
+        headshots = 0;
+      }
       
       let dmgDealtStr = row.getString('DmgDealt');
       let dmgDealt = parseFloat(dmgDealtStr);
@@ -147,8 +154,15 @@ class DataLoader {
     for (let i = 0; i < table.getRowCount(); i++) {
       let row = table.getRow(i);
       let killsStr = row.getString('Kills(HS)');
-      let kills = parseInt(killsStr.split('(')[0]);
-      let headshots = parseInt(killsStr.split('(')[1].split(')')[0]);
+      let kills, headshots;
+      
+      if (killsStr.includes('(')) {
+        kills = parseInt(killsStr.split('(')[0]);
+        headshots = parseInt(killsStr.split('(')[1].split(')')[0]);
+      } else {
+        kills = parseInt(killsStr);
+        headshots = 0;
+      }
       
       let dmgDealtStr = row.getString('DmgDealt');
       let dmgDealt = parseFloat(dmgDealtStr);
