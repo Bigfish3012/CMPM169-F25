@@ -77,6 +77,7 @@ class DataLoader {
       let row = table.getRow(i);
       let teamData = {
         rank: row.getNum('Rank'),
+        originalRank: row.getNum('Rank'), // Store original rank for restoration
         team: row.getString('Team'),
         totalPoints: row.getNum('Total Points'),
         placementPoints: row.getNum('Placement Points'),
@@ -121,6 +122,7 @@ class DataLoader {
       
       let teamData = {
         rank: row.getNum('RANK'),
+        originalRank: row.getNum('RANK'), // Store original rank for restoration
         team: row.getString('Team'),
         kills: kills,
         headshots: headshots,
@@ -182,6 +184,7 @@ class DataLoader {
       
       let teamData = {
         rank: row.getNum('Rank'),
+        originalRank: row.getNum('Rank'), // Store original rank for restoration
         team: row.getString('Team'),
         player: row.getString('Player'),
         kills: kills,
@@ -213,8 +216,13 @@ class DataLoader {
   }
   
   sortByMetric(metric) {
-    // Don't sort if 'all'
+    // If 'all', restore original ranking
     if (metric === 'all') {
+      this.teamsData.sort((a, b) => a.originalRank - b.originalRank);
+      // Restore original ranks
+      for (let i = 0; i < this.teamsData.length; i++) {
+        this.teamsData[i].rank = this.teamsData[i].originalRank;
+      }
       return;
     }
     
