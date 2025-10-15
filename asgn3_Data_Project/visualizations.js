@@ -32,112 +32,24 @@ class Visualizer {
     
     textSize(12);
     fill(100);
-    text('Click buttons to switch data', this.canvasWidth / 2, 60);
+    text('Click buttons to switch data | Click metric buttons below to sort and filter', this.canvasWidth / 2, 60);
   }
   
-  drawLegend(dataSource) {
-    let legendY = 135;
-    let boxSize = 15;
-    let spacing = 150;
-    
-    textSize(12);
-    textAlign(LEFT);
-    
-    if (dataSource === 'final_rankings') {
-      let legendX = this.canvasWidth - 650;
-      
-      // Total Points
-      fill(color('#8FA31E'));
-      rect(legendX, legendY, boxSize, boxSize);
-      fill(0);
-      text('Total Points', legendX + boxSize + 5, legendY + boxSize - 3);
-      
-      // Placement Points
-      legendX += spacing;
-      fill(color('#58A0C8'));
-      rect(legendX, legendY, boxSize, boxSize);
-      fill(0);
-      text('Placement Points', legendX + boxSize + 5, legendY + boxSize - 3);
-      
-      // Kills
-      legendX += spacing;
-      fill(color('#E43636'));
-      rect(legendX, legendY, boxSize, boxSize);
-      fill(0);
-      text('Kills', legendX + boxSize + 5, legendY + boxSize - 3);
-      
-      // WWCD
-      legendX += spacing;
-      fill(color('#EF7722'));
-      rect(legendX, legendY, boxSize, boxSize);
-      fill(0);
-      text('WWCD', legendX + boxSize + 5, legendY + boxSize - 3);
-    } else {
-      // For stats views - 2 rows
-      let legendX = this.canvasWidth - 550;
-      let legendY1 = legendY;
-      let legendY2 = legendY + 25;
-      let spacing2 = 140;
-      
-      // Row 1
-      // Kills(HS)
-      fill(color('#E43636'));
-      rect(legendX, legendY1, boxSize, boxSize);
-      fill(0);
-      text('Kills(HS)', legendX + boxSize + 5, legendY1 + boxSize - 3);
-      
-      // Damage
-      legendX += spacing2;
-      fill(color('#B1AB86'));
-      rect(legendX, legendY1, boxSize, boxSize);
-      fill(0);
-      text('Damage', legendX + boxSize + 5, legendY1 + boxSize - 3);
-      
-      // Assists
-      legendX += spacing2;
-      fill(color('#7965C1'));
-      rect(legendX, legendY1, boxSize, boxSize);
-      fill(0);
-      text('Assists', legendX + boxSize + 5, legendY1 + boxSize - 3);
-      
-      // AVG Damage
-      legendX += spacing2;
-      fill(color('#F79B72'));
-      rect(legendX, legendY1, boxSize, boxSize);
-      fill(0);
-      text('AVG Damage', legendX + boxSize + 5, legendY1 + boxSize - 3);
-      
-      // Row 2
-      legendX = this.canvasWidth - 550;
-      
-      // Longest Kill
-      fill(color('#B5828C'));
-      rect(legendX, legendY2, boxSize, boxSize);
-      fill(0);
-      text('Longest Kill', legendX + boxSize + 5, legendY2 + boxSize - 3);
-      
-      // Time Survived
-      legendX += spacing2;
-      fill(color('#F5C45E'));
-      rect(legendX, legendY2, boxSize, boxSize);
-      fill(0);
-      text('Time Survived', legendX + boxSize + 5, legendY2 + boxSize - 3);
-      
-      // Distance Moved
-      legendX += spacing2;
-      fill(color('#006A71'));
-      rect(legendX, legendY2, boxSize, boxSize);
-      fill(0);
-      text('Dist Moved', legendX + boxSize + 5, legendY2 + boxSize - 3);
-    }
-  }
   
   drawTeamRow(teamData, y, leftMargin, rankWidth, chartStartX, chartWidth, 
               dataSource, animationProgress, maxValue, maxKills, maxDamage, 
               maxAssists, maxAvgDmg, maxLongestKill, maxTimeSurvived, maxDisMoved) {
     let barHeight = 28;
     let barSpacing = 4;
-    let numBars = dataSource === 'final_rankings' ? 4 : 7;
+    
+    // Calculate number of bars based on data source and selected metric
+    let numBars;
+    if (selectedMetric === 'all') {
+      numBars = dataSource === 'final_rankings' ? 4 : 7;
+    } else {
+      numBars = 1;
+    }
+    
     let centerY = y + (numBars * barHeight + (numBars - 1) * barSpacing) / 2;
     
     // Draw rank
@@ -186,6 +98,48 @@ class Visualizer {
     let wwcdScale = chartWidth / 5;
     let wwcdWidth = teamData.wwcd * wwcdScale * easedProgress;
     
+    // If a specific metric is selected, only draw that bar
+    if (selectedMetric !== 'all') {
+      let barY = y;
+      let barWidth, barColor, barLabel;
+      
+      switch(selectedMetric) {
+        case 'totalPoints':
+          barWidth = totalPointsWidth;
+          barColor = '#8FA31E';
+          barLabel = 'Total Points: ' + teamData.totalPoints;
+          break;
+        case 'placementPoints':
+          barWidth = placementPointsWidth;
+          barColor = '#58A0C8';
+          barLabel = 'Placement Points: ' + teamData.placementPoints;
+          break;
+        case 'kills':
+          barWidth = killsWidth;
+          barColor = '#E43636';
+          barLabel = 'Kills: ' + teamData.kills;
+          break;
+        case 'wwcd':
+          barWidth = wwcdWidth;
+          barColor = '#EF7722';
+          barLabel = 'WWCD: ' + teamData.wwcd;
+          break;
+      }
+      
+      let barHover = mouseY > barY && mouseY < barY + barHeight && 
+                     mouseX > chartStartX && mouseX < chartStartX + barWidth;
+      
+      fill(color(barColor));
+      rect(chartStartX, barY, barWidth, barHeight);
+      
+      if (barHover) {
+        this.drawBarHover(barLabel, chartStartX, barY, barWidth, barHeight);
+      }
+      
+      return;
+    }
+    
+    // Otherwise, draw all bars (original behavior)
     // Bar 1: Total Points
     let bar1Y = y;
     let bar1Hover = mouseY > bar1Y && mouseY < bar1Y + barHeight && mouseX > chartStartX && mouseX < chartStartX + totalPointsWidth;
@@ -253,6 +207,63 @@ class Visualizer {
     let timeSurvivedWidth = teamData.timeSurvived * timeSurvivedScale * easedProgress;
     let disMovedWidth = teamData.disMoved * disMovedScale * easedProgress;
     
+    // If a specific metric is selected, only draw that bar
+    if (selectedMetric !== 'all') {
+      let barY = y;
+      let barWidth, barColor, barLabel;
+      
+      switch(selectedMetric) {
+        case 'kills':
+          barWidth = killsWidth;
+          barColor = '#E43636';
+          barLabel = 'Kills(HS): ' + teamData.kills + '(' + teamData.headshots + ')';
+          break;
+        case 'dmgDealt':
+          barWidth = dmgWidth;
+          barColor = '#B1AB86';
+          barLabel = 'Damage: ' + teamData.dmgDealtStr;
+          break;
+        case 'assists':
+          barWidth = assistsWidth;
+          barColor = '#7965C1';
+          barLabel = 'Assists: ' + teamData.assists;
+          break;
+        case 'avgDmg':
+          barWidth = avgDmgWidth;
+          barColor = '#F79B72';
+          barLabel = 'AVG Damage: ' + teamData.avgDmgStr;
+          break;
+        case 'longestKill':
+          barWidth = longestKillWidth;
+          barColor = '#B5828C';
+          barLabel = 'Longest Kill: ' + teamData.longestKillStr;
+          break;
+        case 'timeSurvived':
+          barWidth = timeSurvivedWidth;
+          barColor = '#F5C45E';
+          barLabel = 'Time Survived: ' + teamData.timeSurvivedStr;
+          break;
+        case 'disMoved':
+          barWidth = disMovedWidth;
+          barColor = '#006A71';
+          barLabel = 'Dist Moved: ' + teamData.disMovedStr;
+          break;
+      }
+      
+      let barHover = mouseY > barY && mouseY < barY + barHeight && 
+                     mouseX > chartStartX && mouseX < chartStartX + barWidth;
+      
+      fill(color(barColor));
+      rect(chartStartX, barY, barWidth, barHeight);
+      
+      if (barHover) {
+        this.drawBarHover(barLabel, chartStartX, barY, barWidth, barHeight);
+      }
+      
+      return; // Exit early, don't draw other bars
+    }
+    
+    // Otherwise, draw all bars (original behavior)
     // Bar 1: Kills(HS)
     let bar1Y = y;
     let bar1Hover = mouseY > bar1Y && mouseY < bar1Y + barHeight && mouseX > chartStartX && mouseX < chartStartX + killsWidth;

@@ -1,10 +1,14 @@
 let dataLoader;
 let visualizer;
 let uiManager;
+let metricButtonManager;
 
 let animationProgress = 0;
 let animationSpeed = 0.02;
 let animationComplete = false;
+
+// Track selected metric for sorting and filtering
+let selectedMetric = 'all'; // 'all', 'kills', 'dmgDealt', 'assists', 'avgDmg', 'longestKill', 'timeSurvived', 'disMoved'
 
 function preload() {
   dataLoader = new DataLoader();
@@ -18,13 +22,22 @@ function setup() {
   
   visualizer = new Visualizer();
   uiManager = new UIManager();
+  metricButtonManager = new MetricButtonManager(1400);
   
   updateCanvasSize();
 }
 
 function updateCanvasSize() {
   let startY = 205;
-  let rowHeight = dataLoader.currentDataSource === 'final_rankings' ? 135 : 240;
+  let rowHeight;
+  
+  if (dataLoader.currentDataSource === 'final_rankings') {
+    // Adjust row height based on selected metric
+    rowHeight = (selectedMetric === 'all') ? 135 : 50;
+  } else {
+    rowHeight = (selectedMetric === 'all') ? 240 : 50;
+  }
+  
   let requiredHeight = startY + (dataLoader.teamsData.length * rowHeight) + 100;
   
   requiredHeight = max(requiredHeight, 1000);
@@ -45,7 +58,7 @@ function draw() {
     }
   }
   
-  // Check if data is loaded
+  // Check if data is not loaded
   if (dataLoader.errorMessage !== '') {
     textSize(20);
     textAlign(CENTER);
@@ -55,22 +68,22 @@ function draw() {
     return;
   }
   
-  if (dataLoader.teamsData.length === 0) {
-    textSize(20);
-    textAlign(CENTER);
-    fill(100);
-    text('Loading data...', width / 2, height / 2);
-    return;
-  }
-  
   // Draw UI components
   visualizer.drawTitle(dataLoader.currentDataSource);
   uiManager.drawButtons(dataLoader.currentDataSource);
-  visualizer.drawLegend(dataLoader.currentDataSource);
+  metricButtonManager.drawMetricButtons(dataLoader.currentDataSource);
   
   // Draw data visualization
   let startY = 205;
-  let rowHeight = dataLoader.currentDataSource === 'final_rankings' ? 135 : 240;
+  let rowHeight;
+  
+  if (dataLoader.currentDataSource === 'final_rankings') {
+    // Adjust row height based on selected metric
+    rowHeight = (selectedMetric === 'all') ? 135 : 50;
+  } else {
+    rowHeight = (selectedMetric === 'all') ? 240 : 50;
+  }
+  
   let leftMargin = 50;
   let rankWidth = 40;
   let teamNameWidth = 200;
@@ -121,10 +134,24 @@ function mousePressed() {
   if (clickedSource && clickedSource !== dataLoader.currentDataSource) {
     animationProgress = 0;
     animationComplete = false;
+    selectedMetric = 'all'; // Reset metric when switching data source
     
     dataLoader.loadDataSource(clickedSource, () => {
       // Update canvas size when new data loads
       updateCanvasSize();
     });
+    return;
+  }
+  
+  // Check if clicking on a metric button
+  let clickedMetric = metricButtonManager.checkButtonClick(mouseX, mouseY);
+  if (clickedMetric) {
+    selectedMetric = clickedMetric;
+    animationProgress = 0;
+    animationComplete = false;
+    
+    // Re-sort data based on selected metric
+    dataLoader.sortByMetric(selectedMetric);
+    updateCanvasSize();
   }
 }

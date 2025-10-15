@@ -211,5 +211,83 @@ class DataLoader {
       this.maxValue = max(this.maxValue, teamData.dmgDealt);
     }
   }
+  
+  sortByMetric(metric) {
+    // Don't sort if 'all'
+    if (metric === 'all') {
+      return;
+    }
+    
+    // Sort the data based on the selected metric
+    this.teamsData.sort((a, b) => {
+      let aValue, bValue;
+      
+      // Handle final_rankings metrics
+      if (this.currentDataSource === 'final_rankings') {
+        switch(metric) {
+          case 'totalPoints':
+            aValue = a.totalPoints;
+            bValue = b.totalPoints;
+            break;
+          case 'placementPoints':
+            aValue = a.placementPoints;
+            bValue = b.placementPoints;
+            break;
+          case 'kills':
+            aValue = a.kills;
+            bValue = b.kills;
+            break;
+          case 'wwcd':
+            aValue = a.wwcd;
+            bValue = b.wwcd;
+            break;
+          default:
+            return 0;
+        }
+      } else {
+        // Handle stats metrics
+        switch(metric) {
+          case 'kills':
+            aValue = a.kills;
+            bValue = b.kills;
+            break;
+          case 'dmgDealt':
+            aValue = a.dmgDealt;
+            bValue = b.dmgDealt;
+            break;
+          case 'assists':
+            aValue = a.assists;
+            bValue = b.assists;
+            break;
+          case 'avgDmg':
+            aValue = a.avgDmg;
+            bValue = b.avgDmg;
+            break;
+          case 'longestKill':
+            aValue = a.longestKill;
+            bValue = b.longestKill;
+            break;
+          case 'timeSurvived':
+            aValue = a.timeSurvived;
+            bValue = b.timeSurvived;
+            break;
+          case 'disMoved':
+            aValue = a.disMoved;
+            bValue = b.disMoved;
+            break;
+          default:
+            return 0;
+        }
+      }
+      
+      // Sort in descending order (higher values first)
+      return bValue - aValue;
+    });
+    
+    // Update ranks after sorting
+    for (let i = 0; i < this.teamsData.length; i++) {
+      this.teamsData[i].rank = i + 1;
+    }
+  }
 }
 
