@@ -1,5 +1,3 @@
-// Data loading and parsing module
-
 class DataLoader {
   constructor() {
     this.teamsData = [];
