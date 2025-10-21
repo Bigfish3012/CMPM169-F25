@@ -1,14 +1,14 @@
 // here is the fish class
-//source: https://editor.p5js.org/alecardena/sketches/e-g9BJnsm
-
 class Fish {
   constructor(x, y) {
     this.pos = createVector(x, y);
-    this.vel = createVector(random(-1, 1), random(-1, 1));
-    this.size = random(30, 60);
+    this.vel = createVector(random(-0.5, 0.5), random(-0.5, 0.5));
+    this.size = random(20, 70);
     this.tailAngle = 0;
     this.tailSpeed = random(0.1, 0.2);
-    this.color = color(random(200, 255), random(100, 150), random(0, 50), 180);
+    this.finAngle = 0;
+    this.finSpeed = random(0.08, 0.1);
+    this.color = color(random(200, 255), random(100, 150), random(0, 50));
     this.wanderTheta = random(TWO_PI);
   }
   
@@ -29,24 +29,63 @@ class Fish {
     let target = p5.Vector.add(circlePos, circleOffset);
     
     let steer = p5.Vector.sub(target, this.pos);
-    steer.setMag(0.05);
+    steer.setMag(0.02);
     this.vel.add(steer);
-    this.vel.limit(2);
+    this.vel.limit(1);
   }
   
-  // Update fish position and tail animation
-  update() {
-    this.wander();
+  // Find and move towards nearest food
+  seekFood(fishFeeds) {
+    let closestFood = null;
+    let closestDist = 400; // Detection range
+    
+    for (let food of fishFeeds) {
+      if (!food.eaten) {
+        let d = p5.Vector.dist(this.pos, food.pos);
+        if (d < closestDist) {
+          closestDist = d;
+          closestFood = food;
+        }
+      }
+    }
+    
+    if (closestFood) {
+      // Steer towards food
+      let desired = p5.Vector.sub(closestFood.pos, this.pos);
+      desired.setMag(1.5);
+      let steer = p5.Vector.sub(desired, this.vel);
+      steer.limit(0.1);
+      this.vel.add(steer);
+      
+      // Eat food if close enough
+      if (closestDist < this.size * 0.5) {
+        closestFood.eaten = true;
+      }
+      
+      return true;
+    }
+    return false;
+  }
+  
+  // Update fish position and animations
+  update(fishFeeds) {
+    // Try to seek food first, if no food nearby then wander
+    let foundFood = this.seekFood(fishFeeds);
+    if (!foundFood) {
+      this.wander();
+    }
+    
     this.pos.add(this.vel);
     
-    // Wrap around edges - fish can swim freely and reappear on the other side
+    // Wrap around edges
     if (this.pos.x < -this.size) this.pos.x = width + this.size;
     if (this.pos.x > width + this.size) this.pos.x = -this.size;
     if (this.pos.y < -this.size) this.pos.y = height + this.size;
     if (this.pos.y > height + this.size) this.pos.y = -this.size;
     
-    // Update tail animation
+    // Update tail and fin animations
     this.tailAngle += this.tailSpeed;
+    this.finAngle += this.finSpeed;
   }
   
   // Draw the fish
@@ -58,37 +97,91 @@ class Fish {
     let angle = this.vel.heading();
     rotate(angle);
     
-    // Draw fish body
     fill(this.color);
     stroke(0);
     strokeWeight(2);
-    ellipse(0, 0, this.size, this.size * 0.6);
     
-    // Draw fish eye
-    fill(255);
-    circle(this.size * 0.25, -this.size * 0.1, this.size * 0.15);
+    // Draw streamlined fish body (elongated)
+    beginShape();
+    vertex(this.size * 0.5, 0);
+    bezierVertex(this.size * 0.5, -this.size * 0.25, 
+                 this.size * 0.2, -this.size * 0.3, 
+                 0, -this.size * 0.3);
+    vertex(-this.size * 0.5, -this.size * 0.2);
+    vertex(-this.size * 0.7, -this.size * 0.1);
+    vertex(-this.size * 0.7, 0);
+    vertex(-this.size * 0.7, this.size * 0.1);
+    vertex(-this.size * 0.5, this.size * 0.2);
+    vertex(0, this.size * 0.3);
+    bezierVertex(this.size * 0.2, this.size * 0.3, 
+                 this.size * 0.5, this.size * 0.25, 
+                 this.size * 0.5, 0);
+    endShape(CLOSE);
+    
+    // Draw two eyes
     fill(0);
-    circle(this.size * 0.28, -this.size * 0.1, this.size * 0.08);
+    ellipse(this.size * 0.25, -this.size * 0.22, this.size * 0.15, this.size * 0.1);
+    ellipse(this.size * 0.25, this.size * 0.22, this.size * 0.15, this.size * 0.1);
+    
+    // Draw dorsal fin
+    fill(this.color);
+    let dorsalSwing = sin(this.finAngle * 1.2) * 0.5;
+    
+    let dorsalStart = createVector(this.size * 0.15, 0);
+    let dorsalEnd = createVector(-this.size * 0.5, 0);
+    let dorsalMidX = (dorsalStart.x + dorsalEnd.x) / 2;
+    let dorsalMidY = dorsalSwing * this.size * 0.25;
+    
+    beginShape();
+    vertex(dorsalStart.x, dorsalStart.y);
+    vertex(dorsalMidX, dorsalMidY);
+    vertex(dorsalEnd.x, dorsalEnd.y);
+    endShape();
+    
+    // Draw pectoral fins
+    fill(this.color);
+    let finSwing = sin(this.finAngle) * 0.15;
+    
+    // Left fin
+    push();
+    translate(0, -this.size * 0.3);
+    rotate(-finSwing);
+    beginShape();
+    vertex(0, 0);
+    vertex(-this.size * 0.2, -this.size * 0.2);
+    vertex(-this.size * 0.35, -this.size * 0.05);
+    endShape(CLOSE);
+    pop();
+    
+    // Right fin
+    push();
+    translate(0, this.size * 0.3);
+    rotate(finSwing);
+    beginShape();
+    vertex(0, 0);
+    vertex(-this.size * 0.2, this.size * 0.2);
+    vertex(-this.size * 0.35, this.size * 0.05);
+    endShape(CLOSE);
+    pop();
     
     // Draw animated tail
-    let tailWave = sin(this.tailAngle) * 0.3;
+    let tailSwing = sin(this.tailAngle) * 0.4;
     fill(this.color);
+    
+    push();
+    translate(-this.size * 0.7, 0);
+    rotate(tailSwing);
     
     // Tail fin
     beginShape();
-    vertex(-this.size * 0.5, 0);
-    vertex(-this.size * 0.8, -this.size * 0.3 + tailWave * this.size);
-    vertex(-this.size * 0.9, 0 + tailWave * this.size);
-    vertex(-this.size * 0.8, this.size * 0.3 + tailWave * this.size);
-    vertex(-this.size * 0.5, 0);
+    vertex(0, 0);
+    vertex(-this.size * 0.3, -this.size * 0.25);
+    vertex(-this.size * 0.2, 0);
+    vertex(-this.size * 0.3, this.size * 0.25);
+    vertex(0, 0);
     endShape(CLOSE);
     
-    // Dorsal fin
-    beginShape();
-    vertex(-this.size * 0.2, -this.size * 0.3);
-    vertex(-this.size * 0.1, -this.size * 0.5);
-    vertex(0, -this.size * 0.3);
-    endShape(CLOSE);
+    pop();
     
     pop();
   }
