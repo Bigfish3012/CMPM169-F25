@@ -10,14 +10,12 @@ class FishFeed {
     this.wobbleSpeed = random(0.05, 0.1);
   }
   
-  // Update fish feed position - slowly sinking
+  // Update fish feed position
   update() {
-    // Gentle wobbling motion as it sinks
     this.wobble += this.wobbleSpeed;
     this.pos.x += sin(this.wobble) * 0.5;
     this.pos.y += this.sinkSpeed;
     
-    // Slow down horizontal velocity
     this.vel.mult(0.95);
     this.pos.add(this.vel);
   }
@@ -25,12 +23,12 @@ class FishFeed {
   // Draw the fish feed
   display() {
     if (!this.eaten) {
-      fill(150, 100, 50, 200);
+      fill("#8AA624");
       noStroke();
       circle(this.pos.x, this.pos.y, this.size);
       
       // Add a small highlight
-      fill(200, 150, 100, 150);
+      fill("#4DFFBE");
       circle(this.pos.x - this.size * 0.2, this.pos.y - this.size * 0.2, this.size * 0.4);
     }
   }

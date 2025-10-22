@@ -3,9 +3,9 @@ class Fish {
   constructor(x, y) {
     this.pos = createVector(x, y);
     this.vel = createVector(random(-0.5, 0.5), random(-0.5, 0.5));
-    this.size = random(20, 70);
+    this.size = random(40, 60);
     this.tailAngle = 0;
-    this.tailSpeed = random(0.1, 0.2);
+    this.tailSpeed = random(0.05, 0.1);
     this.finAngle = 0;
     this.finSpeed = random(0.08, 0.1);
     this.color = color(random(200, 255), random(100, 150), random(0, 50));
@@ -101,7 +101,7 @@ class Fish {
     stroke(0);
     strokeWeight(2);
     
-    // Draw streamlined fish body (elongated)
+    // Draw fish body
     beginShape();
     vertex(this.size * 0.5, 0);
     bezierVertex(this.size * 0.5, -this.size * 0.25, 
@@ -125,7 +125,7 @@ class Fish {
     
     // Draw dorsal fin
     fill(this.color);
-    let dorsalSwing = sin(this.finAngle * 1.2) * 0.5;
+    let dorsalSwing = sin(this.finAngle) * 0.5;
     
     let dorsalStart = createVector(this.size * 0.15, 0);
     let dorsalEnd = createVector(-this.size * 0.5, 0);
@@ -175,9 +175,9 @@ class Fish {
     // Tail fin
     beginShape();
     vertex(0, 0);
-    vertex(-this.size * 0.3, -this.size * 0.25);
+    vertex(-this.size * 0.3, -this.size * 0.3);
     vertex(-this.size * 0.2, 0);
-    vertex(-this.size * 0.3, this.size * 0.25);
+    vertex(-this.size * 0.3, this.size * 0.3);
     vertex(0, 0);
     endShape(CLOSE);
     

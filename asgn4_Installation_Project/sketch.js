@@ -4,9 +4,16 @@ let numFishes = 20;
 let fishFeeds = [];
 let leaves = [];
 let ripples = [];
+let stones = [];
+let ripplePositions = []; // Store fixed positions for background ripples
 
 function setup() {
-  createCanvas(1800, 800);
+  createCanvas(1600, 800);
+  
+  // Create stones at bottom of pond for realistic effect
+  for (let i = 0; i < 800; i++) {
+    stones.push(new Stone(random(width), random(height)));
+  }
   
   // Create multiple fish
   for (let i = 0; i < numFishes; i++) {
@@ -17,12 +24,23 @@ function setup() {
   for (let i = 0; i < 5; i++) {
     leaves.push(new Leaf(random(width), random(-200, -50)));
   }
+  
+  // Generate fixed random positions for background ripples
+  for (let i = 0; i < 5; i++) {
+    ripplePositions.push({
+      x: random(width),
+      y: random(height)
+    });
+  }
 }
 
 function draw() {
   drawWaterPool();
+  // Display stones at bottom of pond
+  for (let stone of stones) {
+    stone.display();
+  }
   drawRipples();
-  
   // Update and display ripples from leaves
   for (let i = ripples.length - 1; i >= 0; i--) {
     ripples[i].update();
@@ -74,7 +92,6 @@ function draw() {
   }
 }
 
-// Mouse click to add fish feed
 function mousePressed() {
   // Spawn multiple fish feed at mouse position
   for (let i = 0; i < 12; i++) {
@@ -84,10 +101,9 @@ function mousePressed() {
 
 // Draw water pool with gradient effect
 function drawWaterPool() {
-  // Water gradient from light blue at top to darker blue at bottom
   for (let y = 0; y < height; y++) {
     let inter = map(y, 0, height, 0, 1);
-    let c = lerpColor(color("#B0CE88"), color("#4C763B"), inter);
+    let c = lerpColor(color("#37353E"), color("#44444E"), inter);
     stroke(c);
     line(0, y, width, y);
   }
@@ -96,12 +112,14 @@ function drawWaterPool() {
 // Draw animated water ripples
 function drawRipples() {
   noFill();
-  stroke(255, 255, 255, 30);
-  strokeWeight(1);
+  strokeWeight(5);
   
-  for (let i = 0; i < 3; i++) {
-    let offset = (frameCount * 2 + i * 100) % 400;
-    let x = width / 4 + i * width / 4;
-    circle(x, height / 3, offset);
+  for (let i = 0; i < ripplePositions.length; i++) {
+    let offset = (frameCount * 2 + i * 500) % 400;
+    let alpha = map(offset, 0, 400, 150, 0);
+    stroke(255, 255, 255, alpha);
+    let x = ripplePositions[i].x;
+    let y = ripplePositions[i].y;
+    circle(x, y, offset);
   }
 }

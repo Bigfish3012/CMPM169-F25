@@ -7,7 +7,7 @@ class Ripple {
     this.radius = 0;
     this.maxRadius = random(60, 100);
     this.alpha = 255;
-    this.speed = random(1.5, 2.5);
+    this.speed = random(1, 1.5);
   }
   
   update() {
@@ -18,7 +18,7 @@ class Ripple {
   display() {
     noFill();
     stroke(255, 255, 255, this.alpha);
-    strokeWeight(2);
+    strokeWeight(5);
     circle(this.pos.x, this.pos.y, this.radius * 2);
   }
   
