@@ -5,13 +5,14 @@ let fishFeeds = [];
 let leaves = [];
 let ripples = [];
 let stones = [];
+let noises = []; // Store noise effects
 let ripplePositions = []; // Store fixed positions for background ripples
 
 function setup() {
   createCanvas(1600, 800);
   
   // Create stones at bottom of pond for realistic effect
-  for (let i = 0; i < 800; i++) {
+  for (let i = 0; i < 300; i++) {
     stones.push(new Stone(random(width), random(height)));
   }
   
@@ -64,7 +65,7 @@ function draw() {
   
   // Update and display all fish
   for (let fish of fishes) {
-    fish.update(fishFeeds);
+    fish.update(fishFeeds, noises);
     fish.display();
   }
   
@@ -90,12 +91,30 @@ function draw() {
   if (random() < 0.01 && leaves.length < 15) {
     leaves.push(new Leaf(random(width), -30));
   }
+  
+  // Update and display noise effects
+  for (let i = noises.length - 1; i >= 0; i--) {
+    noises[i].update();
+    noises[i].display();
+    
+    if (noises[i].isDead()) {
+      noises.splice(i, 1);
+    }
+  }
 }
 
 function mousePressed() {
   // Spawn multiple fish feed at mouse position
   for (let i = 0; i < 12; i++) {
     fishFeeds.push(new FishFeed(mouseX, mouseY));
+  }
+}
+
+// Handle keyboard input for noise effect
+function keyPressed() {
+  // When spacebar is pressed, create noise at mouse position
+  if (key === ' ') {
+    noises.push(new Noise(mouseX, mouseY));
   }
 }
 

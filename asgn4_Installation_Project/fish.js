@@ -34,10 +34,28 @@ class Fish {
     this.vel.limit(1);
   }
   
+  // Flee from nearby noises
+  fleeFromNoise(noises) {
+    for (let noise of noises) {
+      let d = p5.Vector.dist(this.pos, noise.pos);
+      
+      if (d < noise.scareRadius) {
+        let flee = p5.Vector.sub(this.pos, noise.pos);
+        flee.setMag(2);
+        let steer = p5.Vector.sub(flee, this.vel);
+        steer.limit(0.3);
+        this.vel.add(steer);
+        this.vel.limit(2);
+        return true;
+      }
+    }
+    return false;
+  }
+  
   // Find and move towards nearest food
   seekFood(fishFeeds) {
     let closestFood = null;
-    let closestDist = 400; // Detection range
+    let closestDist = 400;
     
     for (let food of fishFeeds) {
       if (!food.eaten) {
@@ -68,11 +86,14 @@ class Fish {
   }
   
   // Update fish position and animations
-  update(fishFeeds) {
-    // Try to seek food first, if no food nearby then wander
-    let foundFood = this.seekFood(fishFeeds);
-    if (!foundFood) {
-      this.wander();
+  update(fishFeeds, noises) {
+    let isScared = this.fleeFromNoise(noises);
+    
+    if (!isScared) {
+      let foundFood = this.seekFood(fishFeeds);
+      if (!foundFood) {
+        this.wander();
+      }
     }
     
     this.pos.add(this.vel);

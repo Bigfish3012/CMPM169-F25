@@ -2,7 +2,7 @@
 class Stone {
   constructor(x, y) {
     this.pos = createVector(x, y);
-    this.size = random(50, 100);
+    this.size = random(150, 200);
     this.rotation = random(TWO_PI);
     //stone colors
     let colorType = random();
@@ -13,7 +13,6 @@ class Stone {
     } else {
       this.color = color(random(100, 130), random(120, 150), random(90, 120));
     }
-    // Number of vertices for irregular shape
     this.vertices = [];
     this.createShape();
     
@@ -63,14 +62,12 @@ class Stone {
     }
     endShape(CLOSE);
     
-    // Add texture details - small darker spots
     noStroke();
     fill(0, 0, 0, 30);
     for (let spot of this.textureSpots) {
       ellipse(spot.x, spot.y, spot.size);
     }
     
-    // Add highlight for 3D effect
     fill(255, 255, 255, 40);
     let highlightX = -this.size * 0.2;
     let highlightY = -this.size * 0.2;
