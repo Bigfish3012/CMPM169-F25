@@ -13,3 +13,7 @@ main {
   max-width: 1200px;
   margin: 0 auto;
 }
+
+.divider {
+  border-top: 2px solid #000000;
+}
