@@ -1,6 +1,19 @@
 // set up source from: https://editor.p5js.org/hirofumimatsuzaki/sketches/ByHZs4ryV
 const mappa = new Mappa('Leaflet');
-let random_emoji = ['👀', '🤔', '🤨', '🙂', '🙃', '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '🥲', '🥹', '🥺', '🤯', '🤠', '🤡'];
+
+// emoji list from: https://editor.p5js.org/Scatropolis/sketches/NxJZn8UbX
+let random_emoji = ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃", 
+                    "😉", "😊", "😇", "🥰", "😍", "🤩", "😘", "😗", "😚", "😙", 
+                    "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤫", "🤔", 
+                    "🤐", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "🤥", 
+                    "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", 
+                    "🤧", "🥵", "🥶", "🥴", "😵", "🤯", "🤠", "🥳", "😎", "🤓", 
+                    "🧐", "😕", "😟", "🙁", "😮", "😯", "😲", "😳", "🥺", "😦", 
+                    "😧", "😨", "😰", "😥", "😢", "😭", "😱", "😖", "😣", "😞", 
+                    "😓", "😩", "😫", "🥱", "😤", "😡", "😠", "🤬", "😈", "👿", 
+                    "💀", "💩", "🤡", "👹", "👺", "👻", "👽", "👾", "🤖", "😺", 
+                    "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "🙈", "🙉", 
+                    "🙊", "💋", "💌", "💘", "💝", "💕", "💟", "💔", "🧡", "💛"];
 
 let myMap;
 let pins = [];
@@ -55,7 +68,6 @@ function setup(){
       pins = loaded.map(data => {
         const lat = data.lat;
         const lng = data.lng;
-        const radius = data.radius || 10;
         const emoji = data.emoji || 'N/A';
         const description = data.description || 'N/A';
         const user_image = data.user_image || 'N/A';
@@ -69,7 +81,7 @@ function setup(){
           "description": description
         });
         
-        return new Pin(lat, lng, radius, emoji, description, user_image);
+        return new Pin(lat, lng, emoji, description, user_image);
       });
     }
   });
@@ -103,14 +115,30 @@ function mouseDragged() {
 function mouseClicked() {
   if (mouseButton !== LEFT) return;
   
+  if (mouseX < 0 || mouseX >= width || mouseY < 0 || mouseY >= height) {
+    return;
+  }
+  
   if (!isDragging) {
-    const location_map = myMap.pixelToLatLng(mouseX, mouseY);
-    const emoji = random_emoji[Math.floor(Math.random() * random_emoji.length)];
-    const description = 'I am here';
-    const user_image = 'N/A';
-    const pin = new Pin(location_map.lat, location_map.lng, 10, emoji, description, user_image);
-    pins.push(pin);
-    add_pin(pin);
+    let clickedPin = null;
+    for (let pin of pins) {
+      if (pin.isClicked()) {
+        clickedPin = pin;
+        break;
+      }
+    }
+    
+    if (clickedPin) {
+      displayPinInfo(clickedPin);
+    } else {
+      const location_map = myMap.pixelToLatLng(mouseX, mouseY);
+      const emoji = random_emoji[Math.floor(Math.random() * random_emoji.length)];
+      const description = 'The user forgot to write a description!';
+      const user_image = 'N/A';
+      const pin = new Pin(location_map.lat, location_map.lng, emoji, description, user_image);
+      pins.push(pin);
+      showInputBox(pin);
+    }
   }
   
   isDragging = false;
@@ -120,10 +148,95 @@ async function add_pin(pin) {
   const toSave = {
     lat: pin.lat,
     lng: pin.lng,
-    radius: pin.radius || 10,
     emoji: pin.emoji || '', 
     description: pin.description || '',
     user_image: pin.user_image || '',
   };
   await saveData.saveOne(toSave);
+}
+
+// AI generated function to display pin information
+function displayPinInfo(pin) {
+  const infoSection = document.getElementById('info-section');
+  const oldP = infoSection.querySelector('p');
+  if (oldP) {
+    oldP.remove();
+  }
+  const oldInfo = document.getElementById('pin-info');
+  if (oldInfo) {
+    oldInfo.remove();
+  }
+  
+  const infoDiv = document.createElement('div');
+  infoDiv.id = 'pin-info';
+  infoDiv.innerHTML = `
+    <p><strong>Emoji:</strong> ${pin.emoji}</p>
+    <p><strong>Location:</strong> Lat: ${pin.lat.toFixed(4)}, Lng: ${pin.lng.toFixed(4)}</p>
+    <p><strong>Description:</strong> ${pin.description}</p>
+  `;
+  
+  infoSection.appendChild(infoDiv);
+}
+
+// Based on the above AI generated function(displayPinInfo), I modified it to show input box for new pin
+function showInputBox(pin) {
+  const infoSection = document.getElementById('info-section');
+  const oldP = infoSection.querySelector('p');
+  if (oldP) {
+    oldP.remove();
+  }
+  const oldInfo = document.getElementById('pin-info');
+  if (oldInfo) {
+    oldInfo.remove();
+  }
+
+  const infoDiv = document.createElement('div');
+  infoDiv.id = 'pin-info';
+    // emoji event part is AI generated, the description part is what I modified.
+  let emojiButtonsHTML = '';
+  for (let emoji of random_emoji) {
+    emojiButtonsHTML += `<button class="emoji-btn" data-emoji="${emoji}">${emoji}</button>`;
+  }
+  
+  infoDiv.innerHTML = `
+    <p><strong>Location:</strong> Lat: ${pin.lat.toFixed(4)}, Lng: ${pin.lng.toFixed(4)}</p>
+    <p><strong>Select emoji:</strong></p>
+    <div id="emoji-list">${emojiButtonsHTML}</div>
+    <p><strong>Or enter custom emoji:</strong></p>
+    <input type="text" id="emoji_input" placeholder="Enter emoji..." value="${pin.emoji}">
+    <p><strong>Current emoji:</strong> <span id="current-emoji">${pin.emoji}</span></p>
+    <p><strong>Enter description:</strong></p>
+    <textarea id="description_input" class="desc-input " placeholder="Enter your description...">${pin.description}</textarea>
+    <br>
+    <button id="save_button">Save</button>
+  `;
+  
+  infoSection.appendChild(infoDiv);
+  
+
+  const emojiBtns = document.querySelectorAll('.emoji-btn');
+  emojiBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const emoji = this.getAttribute('data-emoji');
+      pin.emoji = emoji;
+      document.getElementById('current-emoji').textContent = emoji;
+      document.getElementById('emoji_input').value = emoji;
+    });
+  });
+  
+  document.getElementById('emoji_input').addEventListener('input', function() {
+    pin.emoji = this.value;
+    document.getElementById('current-emoji').textContent = this.value;
+  });
+  
+  document.getElementById('save_button').addEventListener('click', function() {
+    const description = document.getElementById('description_input').value;
+    const emoji = document.getElementById('emoji_input').value;
+    pin.description = description;
+    pin.emoji = emoji;
+    add_pin(pin);
+    displayPinInfo(pin);
+  });
+  
+  document.getElementById('description_input').focus();
 }

@@ -17,3 +17,8 @@ main {
 .divider {
   border-top: 2px solid #000000;
 }
+
+.desc-input {
+  width: 600px;
+  height: 100px;
+}
