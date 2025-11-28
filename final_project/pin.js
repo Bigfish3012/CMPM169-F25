@@ -4,8 +4,8 @@ class Pin {
     constructor(lat, lng, emoji, description, user_image) {
         this.lat = lat;
         this.lng = lng;
-        this.radius = 20;
-        this.originalRadius = 20;
+        this.radius = 25;
+        this.originalRadius = 25;
         this.emoji = emoji;
         this.description = description;
         this.user_image = user_image;

@@ -22,3 +22,25 @@ main {
   width: 600px;
   height: 100px;
 }
+
+/* Below is AI generated*/
+#emoji-list {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.emoji-btn {
+  font-size: 2em;
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: transform 0.2s;
+}
+
+.emoji-btn:hover {
+  transform: scale(1.1);
+  background-color: #aafd79;
+}

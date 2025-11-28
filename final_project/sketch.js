@@ -68,8 +68,8 @@ function setup(){
       pins = loaded.map(data => {
         const lat = data.lat;
         const lng = data.lng;
-        const emoji = data.emoji || 'N/A';
-        const description = data.description || 'N/A';
+        const emoji = data.emoji;
+        const description = data.description;
         const user_image = data.user_image || 'N/A';
         
         console.log({
@@ -192,7 +192,8 @@ function showInputBox(pin) {
 
   const infoDiv = document.createElement('div');
   infoDiv.id = 'pin-info';
-    // emoji event part is AI generated, the description part is what I modified.
+  
+  // emoji event part is AI generated, the description part the cancel button is what I modified.
   let emojiButtonsHTML = '';
   for (let emoji of random_emoji) {
     emojiButtonsHTML += `<button class="emoji-btn" data-emoji="${emoji}">${emoji}</button>`;
@@ -202,13 +203,14 @@ function showInputBox(pin) {
     <p><strong>Location:</strong> Lat: ${pin.lat.toFixed(4)}, Lng: ${pin.lng.toFixed(4)}</p>
     <p><strong>Select emoji:</strong></p>
     <div id="emoji-list">${emojiButtonsHTML}</div>
-    <p><strong>Or enter custom emoji:</strong></p>
+    <p><strong>Or enter your own emoji:</strong></p>
     <input type="text" id="emoji_input" placeholder="Enter emoji..." value="${pin.emoji}">
     <p><strong>Current emoji:</strong> <span id="current-emoji">${pin.emoji}</span></p>
     <p><strong>Enter description:</strong></p>
     <textarea id="description_input" class="desc-input " placeholder="Enter your description...">${pin.description}</textarea>
     <br>
     <button id="save_button">Save</button>
+    <button id="cancel_button">Cancel</button>
   `;
   
   infoSection.appendChild(infoDiv);
@@ -236,6 +238,22 @@ function showInputBox(pin) {
     pin.emoji = emoji;
     add_pin(pin);
     displayPinInfo(pin);
+  });
+  
+  document.getElementById('cancel_button').addEventListener('click', function() {
+    const pinIndex = pins.indexOf(pin);
+    if (pinIndex > -1) {
+      pins.splice(pinIndex, 1);
+    }
+    
+    const infoSection = document.getElementById('info-section');
+    const oldInfo = document.getElementById('pin-info');
+    if (oldInfo) {
+      oldInfo.remove();
+    }
+    const defaultP = document.createElement('p');
+    defaultP.textContent = 'balabala, INCOMPLETE';
+    infoSection.appendChild(defaultP);
   });
   
   document.getElementById('description_input').focus();
