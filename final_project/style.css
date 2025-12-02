@@ -5,7 +5,6 @@ canvas {
 
 body {
   margin: 0;
-  padding: 20px;
   font-family: Arial, sans-serif;
 }
 
@@ -21,6 +20,27 @@ main {
 .desc-input {
   width: 600px;
   height: 100px;
+}
+
+@font-face {
+  font-family: 'SuperChiby';
+  src: url('Super Chiby.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ka1';
+  src: url('ka1.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'kindergarten';
+  src: url('kindergarten.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 /* Below is AI generated*/

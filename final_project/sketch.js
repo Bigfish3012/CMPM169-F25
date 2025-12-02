@@ -133,7 +133,7 @@ function mouseClicked() {
     } else {
       const location_map = myMap.pixelToLatLng(mouseX, mouseY);
       const emoji = random_emoji[Math.floor(Math.random() * random_emoji.length)];
-      const description = 'The user forgot to write a description!';
+      const description = "Don't forget to add your description!";
       const user_image = 'N/A';
       const pin = new Pin(location_map.lat, location_map.lng, emoji, description, user_image);
       pins.push(pin);
@@ -170,9 +170,9 @@ function displayPinInfo(pin) {
   const infoDiv = document.createElement('div');
   infoDiv.id = 'pin-info';
   infoDiv.innerHTML = `
-    <p><strong>Emoji:</strong> ${pin.emoji}</p>
-    <p><strong>Location:</strong> Lat: ${pin.lat.toFixed(4)}, Lng: ${pin.lng.toFixed(4)}</p>
-    <p><strong>Description:</strong> ${pin.description}</p>
+    <p style="font-family: 'kindergarten'; font-size: 20px;"><strong>Emoji:</strong> ${pin.emoji}</p>
+    <p style="font-family: 'kindergarten'; font-size: 20px;"><strong>Location:</strong> Lat: ${pin.lat.toFixed(4)}, Lng: ${pin.lng.toFixed(4)}</p>
+    <p style="font-family: 'kindergarten'; font-size: 20px;"><strong>Description:</strong> <br>${pin.description}</p>
   `;
   
   infoSection.appendChild(infoDiv);
